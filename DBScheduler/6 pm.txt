@@ -1,0 +1,98 @@
+package dbscheduler;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimerTask;
+import javaConstants.Constants;
+ 
+public class Testing extends TimerTask
+{
+ long diff;
+ public void run()
+          {
+              
+              try {
+                  
+       Class.forName("org.sqlite.JDBC");  // MySQL database connection
+       Connection conn = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\umang\\OneDrive\\Documents\\NetBeansProjects\\BD.db" ); //+ "user= & password=");     
+       Statement pst = conn.createStatement();//("select from BD(Name,Date) values (?,?) ");
+       ResultSet rs =pst.executeQuery("SELECT Name,Date FROM BD");
+       
+       SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        Date d = sdf.parse("04/06/2018");
+        Calendar user = Calendar.getInstance();
+        user.setTime(d);  
+        user.set(Calendar.HOUR_OF_DAY, 0);  
+        user.set(Calendar.MINUTE, 0);  
+        user.set(Calendar.SECOND, 0);  
+        user.set(Calendar.MILLISECOND, 0);
+        System.out.println("Before : Date : " + sdf.format(user.getTime()) + "miliseconds :" + user.getTimeInMillis());
+  //  cal.set(2016, 3, 28);
+  //the current time as UTC milliseconds from the epoch.
+        Calendar now = Calendar.getInstance();
+        System.out.println("Time now: " + sdf.format(now.getTime()) +"milsec : "+ now.getTimeInMillis());
+       
+        
+       String temp="11/05/1998";
+       while(rs.next())
+       {
+          String na =rs.getString("Name");
+          String date = rs.getString("Date");
+          
+          System.out.println(date);
+          if(temp.equals(date))
+          {
+              System.out.println("!!!!!!It matched: " + na + temp);
+           GMailServer sender = new GMailServer(Constants.setFrom, Constants.setPassword);
+          
+             try {
+                 sender.sendMail("_____BIRTHDAY REMINDER_____","Birthday is coming....",Constants.setFrom,Constants.emailTO);
+                 }
+             catch (Exception e) {
+                 }  
+ 
+             System.out.println("Email Sent Succesfully...");
+          } 
+          else
+          {
+           System.out.println("No match with: "+na + date);
+          }
+
+       }
+    
+    
+    /*
+     * Returns the number of milliseconds since January 1, 1970, 00:00:00 GMT represented by this Date object.
+     */
+    //System.out.println(d.getTime());
+    //OR
+       
+     //   diff=(user.getTimeInMillis() - now.getTimeInMillis());
+       
+ } catch (Exception e)
+{
+                  // TODO Auto-generated catch blo
+}
+        
+        /*if(diff<= (86400000+86400000) && diff>=0)
+        { 
+            GMailServer sender = new GMailServer(Constants.setFrom, Constants.setPassword);
+          
+             try {
+                 sender.sendMail("_____BIRTHDAY REMINDER_____","Birthday is coming....",Constants.setFrom,Constants.emailTO);
+                 }
+             catch (Exception e) {
+                 e.printStackTrace();
+                 }  
+ 
+             System.out.println("Email Sent Succesfully...");
+ 
+         }*/
+        
+        
+   }
+}
